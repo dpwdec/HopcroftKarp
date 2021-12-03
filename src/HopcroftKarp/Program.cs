@@ -8,9 +8,6 @@ namespace HopcroftKarp
     {
         public static List<HashSet<Node>> Bfs(BipartiteGraph graph, Matching matching)
         {
-            // initialize list of visisted nodes
-            var visited = new HashSet<Node>();
-
             // initialize layers of the output graph
             var layers = new List<HashSet<Node>>();
 
@@ -30,11 +27,8 @@ namespace HopcroftKarp
 
                 foreach (var node in currentLayer)
                 {
-                    // register node as visited
-                    visited.Add(node);
-
                     // iterate through neighbours that have NOT already been visisted
-                    foreach (var neighbor in node.Connections.Where((neighbour) => !visited.Contains(neighbour)))
+                    foreach (var neighbor in node.Connections.Where(neighbour => !layers.Contains(neighbour)))
                     {
                         // if node is on the left side of the graph
                         if (graph.Left.Contains(node))
@@ -125,6 +119,11 @@ namespace HopcroftKarp
         public static bool Contains<T>(this (T, T) tuple, T cmp) where T : class
         {
             return (tuple.Item1 == cmp || tuple.Item2 == cmp);
+        }
+
+        public static bool Contains<T>(this List<HashSet<T>> self, T cmp) where T: class
+        {
+            return self.Any(set => set.Contains(cmp));
         }
     }
 }
