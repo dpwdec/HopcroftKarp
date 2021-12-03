@@ -15,7 +15,7 @@ namespace HopcroftKarp
             layers.Add(
                 graph
                     .Left
-                    .Where((node) => !matching.Contains(node))
+                    .Where(node => !matching.Contains(node))
                     .ToHashSet()
             );
 
@@ -104,13 +104,13 @@ namespace HopcroftKarp
 
         public bool Contains(Node node)
         {
-            return Pairs.Any((pair) => pair.Item1 == node || pair.Item2 == node);
+            return Pairs.Any(pair => pair.Item1 == node || pair.Item2 == node);
         }
 
         public bool HasPair(Node x, Node y)
         {
 
-            return Pairs.Where((pair) => pair.Contains(x) && pair.Contains(y)).ToList().Count > 0;
+            return Pairs.Where(pair => pair.Contains(x) && pair.Contains(y)).ToList().Count > 0;
         }
     }
 
