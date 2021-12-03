@@ -53,7 +53,7 @@ namespace HopcroftKarp
                 if (nextLayer.Count == 0) { break; }
 
                 // if a node was encountered in this new layer that is unmatched we reach the maximum depth
-                if (nextLayer.Any((node) => !matching.Contains(node)))
+                if (nextLayer.Any(node => !matching.Contains(node)))
                 {
                     layers.Add(nextLayer);
                     break;
