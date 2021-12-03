@@ -14,13 +14,6 @@ namespace HopcroftKarp
             // initialize layers of the output graph
             var layers = new List<HashSet<Node>>();
 
-            var x = graph
-                    .Left
-                    .Where((node) => !matching.Contains(node))
-                    .ToHashSet();
-            
-            Console.WriteLine("list " + graph.Left.Count);
-
             // initialize the first layer starting on the left
             layers.Add(
                 graph
@@ -33,11 +26,11 @@ namespace HopcroftKarp
             while(true)
             {
                 var currentLayer = layers.Last();
-                Console.WriteLine("current layer size " + currentLayer.Count);
                 var nextLayer = new HashSet<Node>();
 
                 foreach (var node in currentLayer)
                 {
+                    // register node as visited
                     visited.Add(node);
 
                     // iterate through neighbours that have NOT already been visisted
@@ -50,18 +43,6 @@ namespace HopcroftKarp
                             {
                                 nextLayer.Add(neighbor);
                             }
-
-                            // if (!matching.Contains(node)) 
-                            // {
-                            //     nextLayer.Add(neighbor);
-                            // }
-                            // else
-                            // {
-                            //     if (!matching.HasPair(node, neighbor))
-                            //     {
-                            //         nextLayer.Add(neighbor);
-                            //     }
-                            // }
                         }
                         else // if its on the right side of the graph
                         {
@@ -73,8 +54,6 @@ namespace HopcroftKarp
                         }
                     }
                 }
-
-                Console.WriteLine("next layer size " + nextLayer.Count);
 
                 // no nodes were added this iteration, then bfs is finished and fully explored
                 if (nextLayer.Count == 0) { break; }
