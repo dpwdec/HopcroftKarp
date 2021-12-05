@@ -99,16 +99,62 @@ namespace HopcroftKarp.UnitTests
                 new HashSet<Node> { f }
             };
 
-            var count = 0;
-            foreach (var layer in layers)
+            Assert.AreEqual(expected, layers);
+        }
+
+        [Test]
+        public void TestBfsDualMatchLevels()
+        {
+            var a = new Node("a");
+            var b = new Node("b");
+            var c = new Node("c");
+            var d = new Node("d");
+            var e = new Node("e");
+            var f = new Node("f");
+            var g = new Node("g");
+            var h = new Node("h");
+
+            a.Connections.Add(d);
+
+            b.Connections.Add(d);
+            b.Connections.Add(f);
+
+            c.Connections.Add(e);
+            c.Connections.Add(h);
+
+            g.Connections.Add(e);
+
+            d.Connections.Add(a);
+            d.Connections.Add(b);
+
+            e.Connections.Add(c);
+            e.Connections.Add(g);
+
+            f.Connections.Add(b);
+
+            h.Connections.Add(c);
+
+            var graph = new BipartiteGraph()
             {
-                Console.WriteLine("Layer " + count);
-                count++;
-                foreach (var item in layer)
-                {
-                    Console.WriteLine(item.Content);
-                }
-            }
+                Left = new List<Node>() { a, b, c, g },
+                Right = new List<Node>() { d, e, f, h }
+            };
+
+            var matching = new Matching();
+            matching.Pairs.Add((b, d));
+            matching.Pairs.Add((c, e));
+
+            var layers = HopcroftKarpMatching.Bfs(graph, matching);
+
+            Console.WriteLine();
+
+            var expected = new List<HashSet<Node>>()
+            {
+                new HashSet<Node> { a, g },
+                new HashSet<Node> { d, e },
+                new HashSet<Node> { b, c },
+                new HashSet<Node> { f, h },
+            };
 
             Assert.AreEqual(expected, layers);
         }
