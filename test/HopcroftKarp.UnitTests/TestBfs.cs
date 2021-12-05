@@ -9,25 +9,14 @@ namespace HopcroftKarp.UnitTests
         [Test]
         public void TestBfsUnmatchedGraph()
         {
-            var a = new Node("foo");
-            var b = new Node("bar");
-            var c = new Node("baz");
-            var d = new Node("foo");
-            var e = new Node("bar");
-            var f = new Node("baze");
-
-            a.Connections.Add(d);
-            b.Connections.Add(e);
-            c.Connections.Add(f);
-            d.Connections.Add(a);
-            e.Connections.Add(b);
-            f.Connections.Add(c);
-
-            var graph = new BipartiteGraph()
-            {
-                Left = new List<Node>() { a, b, c },
-                Right = new List<Node>() { d, e, f }
-            };
+            var graph = new BipartiteGraph(
+                new Dictionary<int, List<int>>
+                {
+                    { 0, new List<int> { 3, 4 } },
+                    { 1, new List<int> { 4 } },
+                    { 2, new List<int> { 5 } },
+                }
+            );
 
             var matching = new Matching();
 
@@ -37,8 +26,8 @@ namespace HopcroftKarp.UnitTests
 
             var expected = new List<HashSet<Node>>()
             {
-                new HashSet<Node> { a, b, c },
-                new HashSet<Node> { d, e, f }
+                new HashSet<Node> { graph.Left[0], graph.Left[1], graph.Left[2] },
+                new HashSet<Node> { graph.Right[0], graph.Right[1], graph.Right[2] }
             };
 
             Assert.AreEqual(expected, layers);

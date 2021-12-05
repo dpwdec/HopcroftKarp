@@ -78,6 +78,41 @@ namespace HopcroftKarp
     {
         public List<Node> Left { get; set; }
         public List<Node> Right { get; set; }
+
+        // Does not allow for orphan nodes on the right side
+        public BipartiteGraph(Dictionary<int, List<int>> left)
+        {
+            // initialize lists
+            Left = new List<Node>();
+            Right = new List<Node>();
+
+            foreach (var association in left)
+            {
+                var leftNode = new Node($"{association.Key}");
+                Left.Add(leftNode);
+
+                // link up the left and right nodes
+                foreach (var rightNodeKey in association.Value)
+                {
+                    var rightNode = Right.All(node => node.Content != $"{rightNodeKey}") ?
+                        new Node($"{rightNodeKey}") :
+                        Right
+                            .Where(node => node.Content == $"{rightNodeKey}")
+                            .First();
+
+                    leftNode.Connections.Add(rightNode);
+                    rightNode.Connections.Add(leftNode);
+
+                    Right.Add(rightNode);
+                    Right = Right.Distinct().ToList();
+                }
+            }
+        }
+
+        public BipartiteGraph()
+        {
+
+        }
     }
 
     public class Node
