@@ -65,6 +65,46 @@ namespace HopcroftKarp
 
             return layers;
         }
+
+        public static List<Node> Dfs(
+            List<HashSet<Node>> layers, 
+            Node node, 
+            int layerIndex, 
+            Matching matching, 
+            List<Node> path)
+        {
+            // if we reach the bottom layer of our layered graph AND we find an unmatched node
+            // this is because only the bottom and top layers of the graph should contain unmatched nodes
+            if (!matching.Contains(node) && layerIndex == 0)
+            {
+                return new List<Node> { node }.Merge(path);
+            }
+
+            var neighbors = node
+                .Connections
+                .Where(neighbor => layerIndex > 0 && layers[layerIndex - 1].Contains(neighbor))
+                .ToList();
+
+            if (neighbors.Count != 0)
+            {
+                return neighbors.Select(neighbor => Dfs(
+                        layers,
+                        neighbor,
+                        layerIndex - 1,
+                        matching,
+                        new List<Node> { neighbor }.Merge(path) // update the path so far
+                    )
+                )
+                // flatten lists
+                .SelectMany(n => n)
+                .ToList();
+                
+            }
+            else
+            {
+                return new List<Node>();
+            }
+        }
     }
 
     class Program
@@ -159,6 +199,12 @@ namespace HopcroftKarp
         public static bool Contains<T>(this List<HashSet<T>> self, T cmp) where T: class
         {
             return self.Any(set => set.Contains(cmp));
+        }
+
+        public static List<T> Merge<T>(this List<T> list, List<T> other)
+        {
+            list.AddRange(other);
+            return list;
         }
     }
 }
