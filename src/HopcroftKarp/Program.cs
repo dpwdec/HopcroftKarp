@@ -193,6 +193,11 @@ namespace HopcroftKarp
 
             return Pairs.Where(pair => pair.Contains(x) && pair.Contains(y)).ToList().Count > 0;
         }
+
+        public Matching MergeAugmentingPath(List<Node> path)
+        {
+            return new Matching();
+        }
     }
 
     public static class Extensions
