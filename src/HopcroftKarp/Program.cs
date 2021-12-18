@@ -80,19 +80,23 @@ namespace HopcroftKarp
                 return new List<Node> { node }.Merge(path);
             }
 
+            // filter node neighbors by whether they are in the next layer
+            // providing we aren't at the bottom layer
             var neighbors = node
                 .Connections
                 .Where(neighbor => layerIndex > 0 && layers[layerIndex - 1].Contains(neighbor))
                 .ToList();
 
+            // if there are at least one valid neighbor
             if (neighbors.Count != 0)
             {
+                // recursively call Dfs for all neighbors producing an array of lists
                 return neighbors.Select(neighbor => Dfs(
                         layers,
                         neighbor,
                         layerIndex - 1,
                         matching,
-                        new List<Node> { neighbor }.Merge(path) // update the path so far
+                        new List<Node> { node }.Merge(path) // update the path so far with this node
                     )
                 )
                 // flatten lists
@@ -100,6 +104,8 @@ namespace HopcroftKarp
                 .ToList();
                 
             }
+            // otherwise just return an empty list, this nullifies any path that was store so far on this search branch
+            // so that a lot of empty lists are flattened leading to only the correct path remaining
             else
             {
                 return new List<Node>();

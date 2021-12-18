@@ -22,8 +22,6 @@ namespace HopcroftKarp.UnitTests
 
             var layers = HopcroftKarpMatching.Bfs(graph, matching);
 
-            Console.WriteLine();
-
             var expected = new List<HashSet<Node>>()
             {
                 new HashSet<Node> { graph.Left[0], graph.Left[1], graph.Left[2] },
@@ -70,8 +68,6 @@ namespace HopcroftKarp.UnitTests
             matching.Pairs.Add((a, e));
 
             var layers = HopcroftKarpMatching.Bfs(graph, matching);
-
-            Console.WriteLine();
 
             var expected = new List<HashSet<Node>>()
             {
@@ -129,8 +125,6 @@ namespace HopcroftKarp.UnitTests
             matching.Pairs.Add((c, e));
 
             var layers = HopcroftKarpMatching.Bfs(graph, matching);
-
-            Console.WriteLine();
 
             var expected = new List<HashSet<Node>>()
             {
