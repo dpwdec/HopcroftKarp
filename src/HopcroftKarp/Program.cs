@@ -217,5 +217,13 @@ namespace HopcroftKarp
             list.AddRange(other);
             return list;
         }
+
+        // takes X number of elements from a list and removes them
+        public static List<T> Take<T>(this List<T> list, int range)
+        {
+            var takenElements = list.GetRange(0, range);
+            list.RemoveRange(0, range);
+            return takenElements;
+        }
     }
 }
