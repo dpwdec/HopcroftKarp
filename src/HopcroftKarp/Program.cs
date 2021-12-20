@@ -194,14 +194,32 @@ namespace HopcroftKarp
             return Pairs.Where(pair => pair.Contains(x) && pair.Contains(y)).ToList().Count > 0;
         }
 
-        public Matching MergeAugmentingPath(List<Node> path)
+        public void RemovePair(Node x, Node y)
         {
-            var pathPairs = new List<List<Node>>();
-            while (path.Count > 0)
+            Pairs.RemoveAll(pair => pair.Contains(x) && pair.Contains(y));
+        }
+
+        public void MergeAugmentingPath(List<Node> path)
+        {
+            // add augmenting pairs into the matching
+            foreach (var augmentingPair in path.IntervalGroup(2))
             {
-                pathPairs.Add(path.Take(2));
+                Pairs.Add((augmentingPair[0], augmentingPair[1]));
             }
-            return new Matching();
+
+            // if this isn't a single depth path
+            if (path.Count > 2)
+            {
+                // top and tail the list
+                path.RemoveAt(0);
+                path.RemoveAt(path.Count - 1);
+
+                // remove all the redundant pairs
+                foreach (var redundantPair in path.IntervalGroup(2))
+                {
+                    RemovePair(redundantPair[0], redundantPair[1]);
+                }
+            }
         }
     }
 
