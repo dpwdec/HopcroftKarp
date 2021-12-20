@@ -226,42 +226,38 @@ namespace HopcroftKarp
         // takes X number of elements from a list and removes them
         public static List<T> Take<T>(this List<T> list, int range)
         {
+            // if the range is larger than the remaining list then just return whatever is left
+            range = range > list.Count ? range - (range - list.Count) : range;
+
             var takenElements = list.GetRange(0, range);
             list.RemoveRange(0, range);
             return takenElements;
         }
 
-        public static List<List<T>> IntervalGroup<T>(this List<T> list, int interval) where T: ICloneable
-        {
-            var intervals = new List<List<T>>();
+        // implementation of interval group for deep clones
+        // public static List<List<T>> IntervalGroup<T>(this List<T> list, int interval) where T: ICloneable
+        // {
+        //     var intervals = new List<List<T>>();
 
-            List<T> clone = list.Select(element => (T) element.Clone()).ToList();
+        //     List<T> clone = list.Select(element => (T) element.Clone()).ToList();
 
-            while (clone.Count > 0)
-            {
-                var x = clone.Take(interval).ToList();
-                intervals.Add(x);
-            }
+        //     while (clone.Count > 0)
+        //     {
+        //         intervals.Add(clone.Take(interval).ToList());
+        //     }
 
-            return intervals;
-        }
+        //     return intervals;
+        // }
 
-        // Group elements in a list by 
         public static List<List<T>> IntervalGroup<T>(this List<T> list, int interval)
         {
             var intervals = new List<List<T>>();
 
-            for (int i = interval; i < list.Count; i += interval)
+            List<T> clone = list.ToList();
+
+            while (clone.Count > 0)
             {
-                var subInterval = i < list.Count ? interval : i - list.Count;
-
-                var slice = new List<T>();
-                for (int j = subInterval; j > 0; j--)
-                {
-                    slice.Add(list[i - j]);
-                }
-
-                intervals.Add(slice);
+                intervals.Add(clone.Take(interval).ToList());
             }
 
             return intervals;
