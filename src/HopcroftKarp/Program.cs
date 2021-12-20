@@ -196,6 +196,11 @@ namespace HopcroftKarp
 
         public Matching MergeAugmentingPath(List<Node> path)
         {
+            var pathPairs = new List<List<Node>>();
+            while (path.Count > 0)
+            {
+                pathPairs.Add(path.Take(2));
+            }
             return new Matching();
         }
     }
@@ -224,6 +229,42 @@ namespace HopcroftKarp
             var takenElements = list.GetRange(0, range);
             list.RemoveRange(0, range);
             return takenElements;
+        }
+
+        public static List<List<T>> IntervalGroup<T>(this List<T> list, int interval) where T: ICloneable
+        {
+            var intervals = new List<List<T>>();
+
+            List<T> clone = list.Select(element => (T) element.Clone()).ToList();
+
+            while (clone.Count > 0)
+            {
+                var x = clone.Take(interval).ToList();
+                intervals.Add(x);
+            }
+
+            return intervals;
+        }
+
+        // Group elements in a list by 
+        public static List<List<T>> IntervalGroup<T>(this List<T> list, int interval)
+        {
+            var intervals = new List<List<T>>();
+
+            for (int i = interval; i < list.Count; i += interval)
+            {
+                var subInterval = i < list.Count ? interval : i - list.Count;
+
+                var slice = new List<T>();
+                for (int j = subInterval; j > 0; j--)
+                {
+                    slice.Add(list[i - j]);
+                }
+
+                intervals.Add(slice);
+            }
+
+            return intervals;
         }
     }
 }
