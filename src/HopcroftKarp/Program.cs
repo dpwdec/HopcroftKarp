@@ -111,12 +111,56 @@ namespace HopcroftKarp
                 return new List<Node>();
             }
         }
+
+        public static Matching Run(BipartiteGraph graph)
+        {
+            var matching = new Matching();
+
+            // run bfs
+            do
+            {
+                var layers = Bfs(graph, matching);
+
+                // determine how we are done
+                if (layers.Count == 0) { break; }
+
+                // run dfs to isolate augmenting paths in layers and update matching
+                do
+                {
+                    // if all the node have been processed in the layers then break
+                    if (layers.Last().Count == 0) { break; }
+
+                    // grab a unmatched node from the last layers
+                    var node = layers.Last().First();
+
+                    // find an augmenting path
+                    var augmentingPath = Dfs(layers, node, layers.Count -1, matching, new List<Node>());
+
+                    // if there are no paths to return then break
+                    if (augmentingPath.Count == 0) { break; }
+
+                    // remove the nodes in the augmenting paths from the layers
+                    // TODO: perhaps could make a better solution using zip?
+                    foreach (var layer in layers)
+                    {
+                        layer.RemoveWhere(layerNode => augmentingPath.Contains(layerNode));
+                    }
+
+                    // update the matching
+                    matching.MergeAugmentingPath(augmentingPath);
+
+                } while(true);
+            } while(true);
+
+            return matching;
+        }
     }
 
     class Program
     {
         static void Main(string[] args)
         {
+
         }
     }
 

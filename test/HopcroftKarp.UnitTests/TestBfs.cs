@@ -136,5 +136,55 @@ namespace HopcroftKarp.UnitTests
 
             Assert.AreEqual(expected, layers);
         }
+
+        [Test]
+        public void TestCompletelyMatchedGraph()
+        {
+            var graph = new BipartiteGraph(
+                new Dictionary<int, List<int>>
+                {
+                    { 0, new List<int> { 3, 4 } },
+                    { 1, new List<int> { 4 } },
+                    { 2, new List<int> { 5 } },
+                }
+            );
+
+            var matching = new Matching();
+
+            var layers = HopcroftKarpMatching.Bfs(graph, matching);
+
+            var expected = new List<HashSet<Node>>()
+            {
+                new HashSet<Node> { graph.Left[0], graph.Left[1], graph.Left[2] },
+                new HashSet<Node> { graph.Right[0], graph.Right[1], graph.Right[2] }
+            };
+
+            Assert.AreEqual(expected, layers);
+        }
+
+        [Test]
+        public void TestCompletelyMatchedGraphWithUnmatchedNode()
+        {
+            var graph = new BipartiteGraph(
+                new Dictionary<int, List<int>>
+                {
+                    { 0, new List<int> { 3, 4 } },
+                    { 1, new List<int> { 4 } },
+                    { 2, new List<int> { 5 } },
+                }
+            );
+
+            var matching = new Matching();
+
+            var layers = HopcroftKarpMatching.Bfs(graph, matching);
+
+            var expected = new List<HashSet<Node>>()
+            {
+                new HashSet<Node> { graph.Left[0], graph.Left[1], graph.Left[2] },
+                new HashSet<Node> { graph.Right[0], graph.Right[1], graph.Right[2] }
+            };
+
+            Assert.AreEqual(expected, layers);
+        }
     }
 }
