@@ -55,7 +55,12 @@ namespace HopcroftKarp
                 // if a node was encountered in this new layer that is unmatched we reach the maximum depth
                 if (nextLayer.Any(node => !matching.Contains(node)))
                 {
-                    layers.Add(nextLayer);
+                    layers.Add(
+                        // remove any matched nodes from this final layer before returning
+                        nextLayer
+                        .Where(node => !matching.Contains(node))
+                        .ToHashSet()
+                    );
                     break;
                 }
 
@@ -101,6 +106,8 @@ namespace HopcroftKarp
                 )
                 // flatten lists
                 .SelectMany(n => n)
+                // ensure the returned path is only the same length as the number of layers
+                .Take(layers.Count)
                 .ToList();
                 
             }
@@ -119,10 +126,17 @@ namespace HopcroftKarp
             // run bfs
             do
             {
+                // if all nodes in either side are matched then a maximum matching has been found
+                if (graph.Left.All(node => matching.Contains(node)) || 
+                    graph.Right.All(node => matching.Contains(node)))
+                {
+                    break;
+                }
+
                 var layers = Bfs(graph, matching);
 
-                // determine how we are done
-                if (layers.Count == 0) { break; }
+                // if bfs produces a path which is uneven then no more augmenting paths can be generated
+                if (layers.Count % 2 == 1) { break; }
 
                 // run dfs to isolate augmenting paths in layers and update matching
                 do
@@ -160,7 +174,16 @@ namespace HopcroftKarp
     {
         static void Main(string[] args)
         {
+            var graph = new BipartiteGraph(
+                new Dictionary<int, List<int>>
+                {
+                    { 0, new List<int> { 3, 4 } },
+                    { 1, new List<int> { 3, 4, 5 } },
+                    { 2, new List<int> { 4 } }
+                }
+            );
 
+            HopcroftKarpMatching.Run(graph);
         }
     }
 

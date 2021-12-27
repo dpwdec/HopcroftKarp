@@ -143,45 +143,145 @@ namespace HopcroftKarp.UnitTests
             var graph = new BipartiteGraph(
                 new Dictionary<int, List<int>>
                 {
-                    { 0, new List<int> { 3, 4 } },
+                    { 0, new List<int> { 3 } },
                     { 1, new List<int> { 4 } },
                     { 2, new List<int> { 5 } },
                 }
             );
 
-            var matching = new Matching();
+            var matching = new Matching()
+            {
+                Pairs = new List<(Node, Node)>
+                {
+                    (graph.Left[0], graph.Right[0]),
+                    (graph.Left[1], graph.Right[1]),
+                    (graph.Left[2], graph.Right[2])
+                }
+            };
+
+            var layers = HopcroftKarpMatching.Bfs(graph, matching);
+
+            var expected = new List<HashSet<Node>>() { new HashSet<Node>() };
+
+            Assert.AreEqual(expected, layers);
+        }
+
+        [Test]
+        public void TestCompletelyMatchedGraphWithUnmatchedRightNode()
+        {
+            var graph = new BipartiteGraph(
+                new Dictionary<int, List<int>>
+                {
+                    { 0, new List<int> { 3 } },
+                    { 1, new List<int> { 4 } },
+                    { 2, new List<int> { 5, 6 } },
+                }
+            );
+
+            var matching = new Matching()
+            {
+                Pairs = new List<(Node, Node)>
+                {
+                    (graph.Left[0], graph.Right[0]),
+                    (graph.Left[1], graph.Right[1]),
+                    (graph.Left[2], graph.Right[2])
+                }
+            };
+
+            var layers = HopcroftKarpMatching.Bfs(graph, matching);
+
+            var expected = new List<HashSet<Node>>() { new HashSet<Node>() };
+
+            Assert.AreEqual(expected, layers);
+        }
+
+        [Test]
+        public void TestCompletelyMatchedGraphWithUnmatchedLeftNode()
+        {
+            var graph = new BipartiteGraph(
+                new Dictionary<int, List<int>>
+                {
+                    { 0, new List<int> { 3 } },
+                    { 1, new List<int> { 4 } },
+                    { 2, new List<int> { 5 } },
+                    { 6, new List<int> { 5 } }
+                }
+            );
+
+            var matching = new Matching()
+            {
+                Pairs = new List<(Node, Node)>
+                {
+                    (graph.Left[0], graph.Right[0]),
+                    (graph.Left[1], graph.Right[1]),
+                    (graph.Left[2], graph.Right[2])
+                }
+            };
 
             var layers = HopcroftKarpMatching.Bfs(graph, matching);
 
             var expected = new List<HashSet<Node>>()
             {
-                new HashSet<Node> { graph.Left[0], graph.Left[1], graph.Left[2] },
-                new HashSet<Node> { graph.Right[0], graph.Right[1], graph.Right[2] }
+                new HashSet<Node> { graph.Left[3] },
+                new HashSet<Node> { graph.Right[2] },
+                new HashSet<Node> { graph.Left[2] }
+            };
+
+            Assert.AreEqual(expected, layers);
+        }        
+
+        [Test]
+        public void TestBfsOddNumberOfLayers()
+        {
+            var graph = new BipartiteGraph(
+                new Dictionary<int, List<int>>
+                {
+                    { 0, new List<int> { 3 } },
+                    { 1, new List<int> { 4, 5 } },
+                    { 2, new List<int> { 3 } },
+                }
+            );
+
+            var matching = new Matching()
+            {
+                Pairs = new List<(Node, Node)>
+                {
+                    (graph.Left[0], graph.Right[0]),
+                    (graph.Left[1], graph.Right[2]),
+                }
+            };
+
+            var layers = HopcroftKarpMatching.Bfs(graph, matching);
+
+            var expected = new List<HashSet<Node>>()
+            {
+                new HashSet<Node> { graph.Left[2] },
+                new HashSet<Node> { graph.Right[0] },
+                new HashSet<Node> { graph.Left[0] }
             };
 
             Assert.AreEqual(expected, layers);
         }
 
         [Test]
-        public void TestCompletelyMatchedGraphWithUnmatchedNode()
+        public void TestInterlockedGraph()
         {
             var graph = new BipartiteGraph(
                 new Dictionary<int, List<int>>
                 {
                     { 0, new List<int> { 3, 4 } },
-                    { 1, new List<int> { 4 } },
-                    { 2, new List<int> { 5 } },
+                    { 1, new List<int> { 3, 4, 5 } },
+                    { 2, new List<int> { 4 } }
                 }
             );
 
-            var matching = new Matching();
+            var layers = HopcroftKarpMatching.Bfs(graph, new Matching());
 
-            var layers = HopcroftKarpMatching.Bfs(graph, matching);
-
-            var expected = new List<HashSet<Node>>()
+            // need to test DFS where  trailing node is entered
+            var expected = new List<HashSet<Node>>
             {
                 new HashSet<Node> { graph.Left[0], graph.Left[1], graph.Left[2] },
-                new HashSet<Node> { graph.Right[0], graph.Right[1], graph.Right[2] }
+                new HashSet<Node> { graph.Right[0], graph.Right[1], graph.Right[2] },
             };
 
             Assert.AreEqual(expected, layers);

@@ -151,5 +151,45 @@ namespace HopcroftKarp.UnitTests
 
             Assert.AreEqual(expected, path);
         }
+
+         [Test]
+        public void TestInterlokedBranchDfs()
+        {
+            var graph = new BipartiteGraph(
+                new Dictionary<int, List<int>>
+                {
+                    { 0, new List<int> { 3, 4 } },
+                    { 1, new List<int> { 3, 4, 5 } },
+                    { 2, new List<int> { 4 } }
+                }
+            );
+
+            var layers = new List<HashSet<Node>>
+            {
+                new HashSet<Node> { graph.Left[0], graph.Left[1], graph.Left[2] },
+                new HashSet<Node> { graph.Right[0], graph.Right[1], graph.Right[2] },
+            };
+
+            var matching = new Matching()
+            {
+                Pairs = new List<(Node, Node)>()
+            };
+
+            var path = HopcroftKarpMatching.Dfs(
+                layers, 
+                graph.Right[0],
+                layers.Count - 1, 
+                matching, 
+                new List<Node>()
+            );
+
+            var expected = new List<Node>
+            {
+                graph.Left[0],  // 0
+                graph.Right[0], // 4
+            };
+
+            Assert.AreEqual(expected, path);
+        }
     }
 }
